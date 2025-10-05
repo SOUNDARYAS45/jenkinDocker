@@ -16,7 +16,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/myapp.git'
+                git branch: 'main', url: 'https://github.com/SOUNDARYAS45/jenkinDocker'
             }
         }
 
