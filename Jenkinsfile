@@ -3,20 +3,24 @@ pipeline {
 
     environment {
         IMAGE_NAME = "myapp"
+        DEV_PORT = "5002"    // Host port for dev container
+        TEST_PORT = "5003"   // Host port for test container
     }
 
     stages {
         stage('Cleanup') {
             steps {
-                echo "Removing previous containers..."
-                sh "docker rm -f ${IMAGE_NAME}_dev || true"
-                sh "docker rm -f ${IMAGE_NAME}_test || true"
+                echo "Stopping and removing previous containers..."
+                sh """
+                docker rm -f ${IMAGE_NAME}_dev || true
+                docker rm -f ${IMAGE_NAME}_test || true
+                """
             }
         }
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/SOUNDARYAS45/jenkinDocker'
+                git branch: 'main', url: 'https://github.com/SOUNDARYAS45/jenkinDocker.git'
             }
         }
 
@@ -27,23 +31,9 @@ pipeline {
             }
         }
 
-       stage('Run Dev Container') {
-    steps {
-        echo "Running dev environment..."
-        sh "docker run -d --name myapp_dev -p 5002:5000 -e ENV=dev myapp:latest || true"
-    }
-}
-
-stage('Run Test Container') {
-    steps {
-        echo "Running test environment..."
-        sh "docker run -d --name myapp_test -p 5003:5000 -e ENV=test myapp:latest || true"
-    }
-}
-
-
-    post {
-        success { echo "Docker containers started successfully!" }
-        failure { echo "Pipeline failed!" }
-    }
-}
+        stage('Run Dev Container') {
+            steps {
+                echo "Running dev environment..."
+                sh """
+                docker run -d --name ${IMAGE_NAME}_dev \
+                -p ${DEV_PORT}:5000_
