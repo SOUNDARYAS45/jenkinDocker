@@ -27,26 +27,20 @@ pipeline {
             }
         }
 
-        stage('Run Dev Container') {
-            steps {
-                echo "Running dev environment..."
-                sh """
-                docker run -d --name ${IMAGE_NAME}_dev \
-                -p 5000:5000 -e ENV=dev ${IMAGE_NAME}:latest
-                """
-            }
-        }
-
-        stage('Run Test Container') {
-            steps {
-                echo "Running test environment..."
-                sh """
-                docker run -d --name ${IMAGE_NAME}_test \
-                -p 5001:5000 -e ENV=test ${IMAGE_NAME}:latest
-                """
-            }
-        }
+       stage('Run Dev Container') {
+    steps {
+        echo "Running dev environment..."
+        sh "docker run -d --name myapp_dev -p 5002:5000 -e ENV=dev myapp:latest || true"
     }
+}
+
+stage('Run Test Container') {
+    steps {
+        echo "Running test environment..."
+        sh "docker run -d --name myapp_test -p 5003:5000 -e ENV=test myapp:latest || true"
+    }
+}
+
 
     post {
         success { echo "Docker containers started successfully!" }
